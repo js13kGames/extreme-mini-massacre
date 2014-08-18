@@ -14,10 +14,10 @@
                 prop;
 
             for (name in o2) {
-                if (Utils.isDefined(o2[name])) {
+                if (typeof (o2[name]) !== 'undefined') {
                     allow = !reservedWords.test(name);
                     if (dummy.hasOwnProperty(name) && allow) {
-                        prop = Utils.getAccessor(dummy, name);
+                        prop = Object.getOwnPropertyDescriptor(dummy, name);
                         if (typeof dummy[name] === 'function') {
                             func = dummy[name].bind(dummy);
                             prop.value = func;
@@ -32,7 +32,7 @@
                     if (typeof o2[name] === 'object') {
                         dummy[name] = mixin({}, o2[name]);
                     } else {
-                        prop = Utils.getAccessor(o2, name);
+                        prop = Object.getOwnPropertyDescriptor(o2, name);
                         Object.defineProperty(dummy, name, prop);
                     }
                 }
@@ -45,7 +45,7 @@
                 dummy = {};
 
             for (name in object) {
-                Object.defineProperty(dummy, name, Utils.getAccessor(object, name));
+                Object.defineProperty(dummy, name, Object.getOwnPropertyDescriptor(object, name));
             }
 
             return dummy;
