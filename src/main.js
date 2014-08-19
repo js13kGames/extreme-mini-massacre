@@ -1,8 +1,10 @@
 (function ($, _) {
-    var moduleQueue = [],
+    'use strict';
+    var include = {},
+        moduleQueue = [],
         onDomLoaded = function () {
             moduleQueue.forEach(function (n) {
-                n(module);
+                n(include);
             });
             moduleQueue.length = 0;
         },
@@ -23,7 +25,7 @@
                             prop.value = func;
                         }
                         dummy['parent'] = dummy['parent'] || {};
-                        Object.defineProperty(dummy['parent'], name, prop);
+                        def(dummy['parent'], name, prop);
                     } else {
                         if (!allow) {
                             throw new Error('You used a reserved word ' + name + '.');
@@ -33,7 +35,7 @@
                         dummy[name] = mixin({}, o2[name]);
                     } else {
                         prop = Object.getOwnPropertyDescriptor(o2, name);
-                        Object.defineProperty(dummy, name, prop);
+                        def(dummy, name, prop);
                     }
                 }
             }
@@ -45,12 +47,12 @@
                 dummy = {};
 
             for (name in object) {
-                Object.defineProperty(dummy, name, Object.getOwnPropertyDescriptor(object, name));
+                def(dummy, name, Object.getOwnPropertyDescriptor(object, name));
             }
 
             return dummy;
         },
-        GameObject = function () {
+        Base = function () {
             var module = {
                 add: function (prop) {
                     module = mixin(module, prop);
@@ -90,12 +92,32 @@
             },
             do :
             function (name, mod) {
-                module[name] = mod(module);
-                return module;
+                include[name] = mod(include);
+                return include;
             }
         };
 
-    $.mod = module;
+    $.inc = include;
+    $.dm = module;
     $.onload = onDomLoaded;
-    $.GameObject = GameObject;
+    $.def = Object.defineProperty;
+    $.defs = Object.defineProperties;
+    $.get = function (i) {
+        return _.getElementById(i);
+    };
+    $.make = function (t) {
+        return _.createElement(t);
+    };
+    $.$ = $;
+    $._ = _;
+    inc.Base = Base;
+    $.mix = mixin;
+    $.isFunc = function (n) {
+        return typeof n === 'function';
+    };
+
+    $.isNum = function (n) {
+        return typeof n === 'number';
+    };
+
 }(window, document));
