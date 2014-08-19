@@ -2,7 +2,16 @@ dm.do(
     'geom',
     function () {
         'use strict';
-        var Vec2 = function (x, y) {
+        var sign = function (n) {
+                if (n > 0) {
+                    return 1;
+                } else if (n < 0) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            },
+            Vec2 = function (x, y) {
                 return {
                     x: typeof x === 'number' ? x : 0,
                     y: typeof y === 'number' ? y : 0,
@@ -58,6 +67,22 @@ dm.do(
                             inter.height = Math.min(this.pos.y + this.height, n.pos.y + n.height) - inter.pos.y;
                         }
                         return inter;
+                    },
+                    separate: function (n) {
+                        var i,
+                            d;
+
+                        if (this.intersects(n)) {
+                            i = this.intersection(n),
+                            d = inc.geom.Vec2();
+                            if (i.width > i.height) {
+                                d.y = sign(this.pos.y - n.pos.y);
+                                this.pos.y += i.height * d.y;
+                            } else {
+                                d.x = sign(this.pos.x - n.pos.x);
+                                this.pos.x += i.width * d.x;
+                           }
+                        }
                     }
                 };
             };

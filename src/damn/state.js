@@ -48,7 +48,7 @@ dm.do(
                 },
                 render: function (gfx) {
                     if (currentState && isFunc(currentState.onRender)) {
-                        currentState.onRender(gameData);
+                        currentState.onRender(gfx);
                     }
                     if (changeState) {
                         swap();

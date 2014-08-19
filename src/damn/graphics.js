@@ -19,6 +19,7 @@ dm.do(
                             }
                         }
                     });
+                    context.fillStyle = context.strokeStyle = color;
                 },
                 module = {
                     cls: function (n) {

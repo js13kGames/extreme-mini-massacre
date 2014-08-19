@@ -17,8 +17,7 @@
 
             for (name in o2) {
                 if (typeof (o2[name]) !== 'undefined') {
-                    allow = !reservedWords.test(name);
-                    if (dummy.hasOwnProperty(name) && allow) {
+                    if (dummy.hasOwnProperty(name)) {
                         prop = Object.getOwnPropertyDescriptor(dummy, name);
                         if (typeof dummy[name] === 'function') {
                             func = dummy[name].bind(dummy);
@@ -26,11 +25,7 @@
                         }
                         dummy['parent'] = dummy['parent'] || {};
                         def(dummy['parent'], name, prop);
-                    } else {
-                        if (!allow) {
-                            throw new Error('You used a reserved word ' + name + '.');
-                        }
-                    }
+                    } 
                     if (typeof o2[name] === 'object') {
                         dummy[name] = mixin({}, o2[name]);
                     } else {
@@ -46,8 +41,8 @@
             var name,
                 dummy = {};
 
-            for (name in object) {
-                def(dummy, name, Object.getOwnPropertyDescriptor(object, name));
+            for (name in o) {
+                def(dummy, name, Object.getOwnPropertyDescriptor(o, name));
             }
 
             return dummy;

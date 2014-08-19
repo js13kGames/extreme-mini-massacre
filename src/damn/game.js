@@ -19,7 +19,6 @@ dm.do(
                     gfx.cls();
                     module.states.update();
                     module.states.render(gfx);
-                    gfx.drawRect(module.mouse.x, module.mouse.y, 100, 100);
                 },
                 onResize = function () {
                     var w = window,
