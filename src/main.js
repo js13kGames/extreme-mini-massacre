@@ -25,7 +25,7 @@
                         }
                         dummy['parent'] = dummy['parent'] || {};
                         def(dummy['parent'], name, prop);
-                    } 
+                    }
                     if (typeof o2[name] === 'object') {
                         dummy[name] = mixin({}, o2[name]);
                     } else {
@@ -47,37 +47,41 @@
 
             return dummy;
         },
-        Base = function () {
-            var module = {
-                add: function (prop) {
-                    module = mixin(module, prop);
-                    return module;
+        Base = function (p) {
+            var init = function () {
+                    module = mixin(module, p);
                 },
-                extend: function () {
-                    var elements = Array.prototype.slice.call(arguments),
-                        child = clone(module),
-                        element = elements[0],
-                        component,
-                        i,
-                        len;
+                module = {
+                    add: function (prop) {
+                        module = mixin(module, prop);
+                        return module;
+                    },
+                    extend: function () {
+                        var elements = Array.prototype.slice.call(arguments),
+                            child = clone(module),
+                            element = elements[0],
+                            component,
+                            i,
+                            len;
 
-                    if (element instanceof Array) {
-                        len = element.length;
-                        for (i = 0; i < len; ++i) {
-                            element[i](child);
-                        }
-                        element = elements[1];
-                        if (typeof element === 'object') {
+                        if (element instanceof Array) {
+                            len = element.length;
+                            for (i = 0; i < len; ++i) {
+                                element[i](child);
+                            }
+                            element = elements[1];
+                            if (typeof element === 'object') {
+                                return mixin(child, element);
+                            }
+                        } else if (typeof element === 'object') {
                             return mixin(child, element);
                         }
-                    } else if (typeof element === 'object') {
-                        return mixin(child, element);
+
+                        return child;
                     }
+                };
 
-                    return child;
-                }
-            };
-
+            init();
             return module;
         },
         module = {
@@ -85,34 +89,44 @@
                 moduleQueue.push(callback);
                 return module;
             },
-            do :
-            function (name, mod) {
+            mk: function (name, mod) {
                 include[name] = mod(include);
                 return include;
             }
         };
 
-    $.inc = include;
-    $.dm = module;
+    $['re'] = function (name) {
+        return include[name];
+    };
+    $['dm'] = module;
     $.onload = onDomLoaded;
-    $.def = Object.defineProperty;
-    $.defs = Object.defineProperties;
-    $.get = function (i) {
+    $['def'] = Object.defineProperty;
+    $['defs'] = Object.defineProperties;
+    $['get'] = function (i) {
         return _.getElementById(i);
     };
-    $.make = function (t) {
+    $['make'] = function (t) {
         return _.createElement(t);
     };
-    $.$ = $;
-    $._ = _;
-    inc.Base = Base;
-    $.mix = mixin;
-    $.isFunc = function (n) {
+    $['$'] = $;
+    $['_'] = _;
+    include['Base'] = Base;
+    $['mix'] = mixin;
+    $['isFunc'] = function (n) {
         return typeof n === 'function';
     };
 
-    $.isNum = function (n) {
+    $['isNum'] = function (n) {
         return typeof n === 'number';
+    };
+    $['sgn'] = function (n) {
+        if (n > 0) {
+            return 1;
+        } else if (n < 0) {
+            return -1;
+        } else {
+            return 0;
+        }
     };
 
 }(window, document));

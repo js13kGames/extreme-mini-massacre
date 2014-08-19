@@ -20,6 +20,7 @@
         "grunt-contrib-cssmin": "~0.10.0",
         "grunt-pngmin": "~0.6.1",
         "grunt-include-source": "~0.4.1",
+        "grunt-closure-compiler": "~0.0.21",
         "matchdep": "~0.1.2"
     },
     "engine": "node 0.8.12",

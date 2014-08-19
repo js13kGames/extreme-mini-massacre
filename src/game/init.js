@@ -1,8 +1,8 @@
 dm.go(
     function () {
         'use strict';
-        $.G = inc.Game();
-        G.states.add('PlayState', inc.PlayState);
+        $['G'] = re('Game')();
+        G.states.add('PlayState', re('PlayState'));
         G.states.set('PlayState');
     }
 );

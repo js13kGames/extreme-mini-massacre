@@ -1,9 +1,9 @@
-dm.do(
+dm.mk(
     'Mouse',
     function () {
         'use strict';
         return function (n) {
-            var pointer = inc.geom.Vec2(),
+            var pointer = re('geom')['Vec2'](),
                 node = n,
                 down = false,
                 hit = false,
@@ -43,7 +43,7 @@ dm.do(
                     });
                 },
                 module = {
-                    ratio: inc.geom.Vec2(1, 1),
+                    ratio: re('geom')['Vec2'](1, 1),
                     down: function () {
                         return down;
                     },

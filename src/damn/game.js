@@ -1,9 +1,9 @@
-dm.do(
+dm.mk(
     'Game',
     function () {
         'use strict';
         return function () {
-            var gfx = inc.Graphics('c'),
+            var gfx = re('Graphics')('c'),
                 raf = (function () {
                     return $.requestAnimationFrame ||
                         $.webkitRequestAnimationFrame ||
@@ -41,9 +41,9 @@ dm.do(
                     width: 800,
                     height: 480,
                     gfx: gfx,
-                    keyboard: inc.Keyboard($),
-                    mouse: inc.Mouse(gfx.canvas),
-                    states: inc.State()
+                    keyboard: re('Keyboard')($),
+                    mouse: re('Mouse')(gfx.canvas),
+                    states: re('State')()
                 };
 
             init();

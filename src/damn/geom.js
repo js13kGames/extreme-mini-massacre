@@ -1,4 +1,4 @@
-dm.do(
+dm.mk(
     'geom',
     function () {
         'use strict';
@@ -42,6 +42,11 @@ dm.do(
                         this.x *= n.x;
                         this.y *= n.y;
                         return this;
+                    },
+                    scale: function (n) {
+                        this.x *= n;
+                        this.y *= n;
+                        return this;
                     }
                 };
             },
@@ -50,6 +55,11 @@ dm.do(
                     pos: Vec2(x, y),
                     width: typeof w === 'number' ? w : 0,
                     height: typeof h === 'number' ? h : 0,
+                    set: function (x, y, w, h) {
+                        this.pos.set(x, y);
+                        this.width = w;
+                        this.height = h;
+                    },
                     intersects: function (n) {
                         var p1 = this.pos,
                             p2 = n.pos;
@@ -74,7 +84,7 @@ dm.do(
 
                         if (this.intersects(n)) {
                             i = this.intersection(n),
-                            d = inc.geom.Vec2();
+                            d = re('geom')['Vec2']();
                             if (i.width > i.height) {
                                 d.y = sign(this.pos.y - n.pos.y);
                                 this.pos.y += i.height * d.y;
@@ -88,8 +98,8 @@ dm.do(
             };
 
         return {
-            Vec2: Vec2,
-            Rect: Rect
+            'Vec2': Vec2,
+            'Rect': Rect
         };
     }
 );

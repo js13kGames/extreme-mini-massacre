@@ -32,6 +32,9 @@ module.exports = function (grunt) {
             }
         },
         uglify: {
+            options: {
+                mangle: true
+            },
             dist: {
                 files: {
                     'build/g.js': [
@@ -76,7 +79,8 @@ module.exports = function (grunt) {
             ],
             afterRelease: [
                 'build/src',
-                'build/zip'
+                'build/zip',
+                'build/g.js.report.txt'
             ]
         },
         compress: {
@@ -96,6 +100,16 @@ module.exports = function (grunt) {
                     'dev/index.html': 'template/dev/index.html'
                 }
             }
+        },
+        'closure-compiler': {
+            frontend: {
+                closurePath: 'node_modules',
+                js: 'build/src/game.js',
+                jsOutputFile: 'build/g.js',
+                options: {
+                    compilation_level: 'ADVANCED_OPTIMIZATIONS'
+                }
+            }
         }
     });
 
@@ -104,13 +118,14 @@ module.exports = function (grunt) {
         'clean:beforeRelease',
         'copy',
         'concat',
-        'uglify',
+        //'uglify',
+        'closure-compiler',
         'htmlmin',
         'cssmin',
         'pngmin',
         'clean:afterRelease',
         'includeSource',
-        'compress'        
+        'compress'
     ]);
 
     grunt.registerTask('dev', [
