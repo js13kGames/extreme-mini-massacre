@@ -8,6 +8,7 @@ dm.mk(
                     down: {},
                     justPressed: {}
                 },
+                callbacks = [],
                 lastKey = -1,
                 onKeyDown = function (evt) {
                     if (!keys.down[evt.keyCode]) {
@@ -15,6 +16,15 @@ dm.mk(
                         keys.justPressed[evt.keyCode] = true;
                     }
                     lastKey = evt.keyCode;
+                    if (callbacks.length > 0) {
+                        var i,
+                            l = callbacks.length;
+                        for (i = 0; i < l; ++i) {
+                            if (isFunc(callbacks[i])) {
+                                callbacks[i](evt.keyCode);
+                            }
+                        }
+                    }
                 },
                 onKeyUp = function (evt) {
                     keys.down[evt.keyCode] = false;
@@ -42,6 +52,17 @@ dm.mk(
                             return true;
                         }
                         return false;
+                    },
+                    addKeyDown: function (n) {
+                        if (isFunc(n) && callbacks.indexOf(n) < 0) {
+                            callbacks.push(n);
+                        }
+                    },
+                    removeKeyDown: function (n) {
+                        var i = callbacks.indexOf(n);
+                        if (i >= 0) {
+                            callbacks.splice(i, 1);
+                        }
                     }
                 };
 

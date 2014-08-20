@@ -16,9 +16,10 @@ dm.mk(
                 }()),
                 mainLoop = function () {
                     raf(mainLoop);
-                    gfx.cls();
+                    gfx.cls();                    
                     module.states.update();
                     module.states.render(gfx);
+                    module.gamepad.update();
                 },
                 onResize = function () {
                     var w = window,
@@ -43,7 +44,8 @@ dm.mk(
                     gfx: gfx,
                     keyboard: re('Keyboard')($),
                     mouse: re('Mouse')(gfx.canvas),
-                    states: re('State')()
+                    states: re('State')(),
+                    gamepad: re('GamePad')()
                 };
 
             init();

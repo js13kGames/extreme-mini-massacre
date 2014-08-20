@@ -6,29 +6,35 @@ dm.mk(
             var image = null,
                 module = re('Base')({
                     pos: re('geom')['Vec2'](x, y),
-                    velocity: re('geom')['Vec2'](0, 0),
+                    vel: re('geom')['Vec2'](0, 0),
                     scale: re('geom')['Vec2'](1, 1),
                     origin: re('geom')['Vec2'](0, 0),
-                    maxVelocity: re('geom')['Vec2'](0, 0),
+                    maxVel: re('geom')['Vec2'](0, 0),
+                    bounds: re('geom')['Rect'](x, y),
                     angle: 0,
                     width: 0,
                     height: 0,
-                    makeImage: function (w, h, c) {
+                    makeImg: function (w, h, c) {
                         c = c || '#fff';
                         image = G.gfx.make(w, h, c);
+                        this.width = w;
+                        this.height = h;
+                        this.bounds.width = w;
+                        this.bounds.height = h;
                     },
                     update: function () {
-                        if (this.maxVelocity.x !== 0) {
-                            if (Math.abs(this.velocity.x) > this.maxVelocity.x) {
-                                this.velocity.x = this.maxVelocity.x * sgn(this.velocity.x);
+                        if (this.maxVel.x !== 0) {
+                            if (Math.abs(this.vel.x) > this.maxVel.x) {
+                                this.vel.x = this.maxVel.x * sgn(this.vel.x);
                             }
                         }
-                        if (this.maxVelocity.y !== 0) {
-                            if (Math.abs(this.velocity.y) > this.maxVelocity.y) {
-                                this.velocity.y = this.maxVelocity.y * sgn(this.velocity.y);
+                        if (this.maxVel.y !== 0) {
+                            if (Math.abs(this.vel.y) > this.maxVel.y) {
+                                this.vel.y = this.maxVel.y * sgn(this.vel.y);
                             }
                         }
-                        this.pos.add(this.velocity);
+                        this.pos.add(this.vel);
+                        this.bounds.pos.copy(this.pos).sub(this.origin);
                     },
                     draw: function (gfx) {
                         var ctx = gfx.context;
