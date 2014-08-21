@@ -55,29 +55,6 @@
                     add: function (prop) {
                         module = mixin(module, prop);
                         return module;
-                    },
-                    extend: function () {
-                        var elements = Array.prototype.slice.call(arguments),
-                            child = clone(module),
-                            element = elements[0],
-                            component,
-                            i,
-                            len;
-
-                        if (element instanceof Array) {
-                            len = element.length;
-                            for (i = 0; i < len; ++i) {
-                                element[i](child);
-                            }
-                            element = elements[1];
-                            if (typeof element === 'object') {
-                                return mixin(child, element);
-                            }
-                        } else if (typeof element === 'object') {
-                            return mixin(child, element);
-                        }
-
-                        return child;
                     }
                 };
 
@@ -128,5 +105,10 @@
             return 0;
         }
     };
-
+    $['ms'] = function () {
+        return new Date().getTime();
+    };
+    $['rnd'] = function (min, max) {
+        return min + Math.random() * (max - min);
+    };
 }(window, document));

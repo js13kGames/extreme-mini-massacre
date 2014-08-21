@@ -3,12 +3,26 @@ dm.mk(
     function () {
         return function (x, y) {
             var speed = 5,
+                Bullet = re('Bullet'),
                 geom = re('geom'),
                 useKeyboard = true,
                 oldMouse = geom['Vec2'](),
                 mouseMoving = false,
                 ray = re('Line')(0, 0, 0, 0),
                 rayCollideObjects = [],
+                currentBullet = 0,
+                delay = 50,
+                delayTimer = ms(),
+                shoot = function () {
+                    if (ms() - delayTimer > delay) {
+                        bullets[currentBullet].shoot(module.pos.x, module.pos.y, module.angle, 1);
+                        currentBullet++;
+                        if (currentBullet > bullets.length - 1) {
+                            currentBullet = 0;
+                        }
+                        delayTimer = ms();
+                    }
+                },
                 followMouse = function () {
                     module.angle = Math.atan2(
                         module.pos.y - G.mouse.y,
@@ -41,23 +55,26 @@ dm.mk(
                 keyboardControl = function () {
                     var active = false;
                     if (G.keyboard.down(65)) {
-                        module.vel.x = -speed;
+                        module.pos.x -= speed;
                         active = true;
                     } else if (G.keyboard.down(68)) {
-                        module.vel.x = speed;
+                        module.pos.x += speed;
                         active = true;
                     }
                     if (G.keyboard.down(87)) {
-                        module.vel.y = -speed;
+                        module.pos.y -= speed;
                         active = true;
                     } else if (G.keyboard.down(83)) {
-                        module.vel.y = speed;
+                        module.pos.y += speed;
                         active = true;
                     }
                     if (G.mouse.x !== oldMouse.x || G.mouse.y !== oldMouse.y) {
                         oldMouse.copy(G.mouse);
                         followMouse();
                         active = true;
+                    }
+                    if (G.mouse.down()) {
+                        shoot();
                     }
                     return active;
                 },
@@ -66,6 +83,7 @@ dm.mk(
                         active = false,
                         threshold = 0.3;
 
+                    if (!gamepad) return active;
                     if (gamepad.axes[0] < -threshold) {
                         module.pos.x += (speed) * gamepad.axes[0];
                         active = true;
@@ -84,19 +102,28 @@ dm.mk(
                     if (Math.abs(gamepad.axes[2]) > threshold || Math.abs(gamepad.axes[3]) > threshold) {
                         followAxes(gamepad);
                     }
-
+                    if (gamepad.buttons[5].pressed || gamepad.buttons[7].pressed) {
+                        shoot();
+                    }
                     return active;
                 },
                 onKeyDown = function () {
                     useKeyboard = true;
                 },
+                bullets = [],
                 module = re('Sprite')(x, y).add({
+                    bullets: function () {
+                        return bullets;
+                    },
                     init: function () {
-                        this.makeImg(20, 20);
-                        this.origin.set(10, 10);
-                        this.maxVel.set(7, 7);
+                        module.makeImg(20, 20);
+                        module.origin.set(10, 10);
+                        module.maxVel.set(7, 7);
                         G.keyboard.addKeyDown(onKeyDown);
-                        G.gfx.context.lineWidth = 5;
+                        //G.gfx.context.lineWidth = 5;
+                        for (var i = 0; i < 50; i++) {
+                            bullets.push(Bullet());
+                        }
                     },
                     update: function () {
                         var active = keyboardControl();
@@ -106,10 +133,10 @@ dm.mk(
                         if (!active) {
                             this.vel.set(0, 0);
                         }
-                        this.parent.update();
+                        module.parent.update();
                     },
                     draw: function (gfx) {
-                        this.parent.draw(gfx);
+                        module.parent.draw(gfx);
                         gfx.color('#ff0000');
                         gfx.alpha(0.5);
                         drawRay(this.angle);

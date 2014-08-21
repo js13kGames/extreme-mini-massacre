@@ -65,16 +65,14 @@ dm.mk(
                                         get: function () {
                                             return children.length;
                                         }
-                                    },
-                                    children: {
-                                        get: function () {
-                                            return children;
-                                        }
                                     }
                                 });
                                 module = mix(module, prop);
                             },
                             module = {
+                                getChildren: function () {
+                                    return children;
+                                },
                                 add: function (base) {
                                     children.push(base);
                                     if (isFunc(base.init)) {

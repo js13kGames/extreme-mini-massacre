@@ -31,18 +31,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-        uglify: {
-            options: {
-                mangle: true
-            },
-            dist: {
-                files: {
-                    'build/g.js': [
-                        'build/src/game.js'
-                    ]
-                }
-            }
-        },
         htmlmin: {
             dist: {
                 options: {
@@ -110,6 +98,58 @@ module.exports = function (grunt) {
                     compilation_level: 'ADVANCED_OPTIMIZATIONS'
                 }
             }
+        },
+        replace: {
+            another_example: {
+                src: ['build/src/game.js'],
+                overwrite: true,
+                replacements: [{
+                    from: /Vec2/g,
+                    to: 'a'
+                }, {
+                    from: /Rectangle/g,
+                    to: 'b'
+                }, {
+                    from: /GamePad/g,
+                    to: 'c'
+                }, {
+                    from: /Sprite/g,
+                    to: 'd'
+                }, {
+                    from: /Bullet/g,
+                    to: 'f'
+                }, {
+                    from: /geom/g,
+                    to: 'g'
+                }, {
+                    from: /PlayState/g,
+                    to: 'h'
+                }, {
+                    from: /Player/g,
+                    to: 'i'
+                }, {
+                    from: /Keyboard/g,
+                    to: 'j'
+                }, {
+                    from: /Mouse/g,
+                    to: 'k'
+                }, {
+                    from: /Graphics/g,
+                    to: 'l'
+                }, {
+                    from: /Line/g,
+                    to: 'm'
+                }, {
+                    from: /State/g,
+                    to: 'n'
+                }, {
+                    from: /QuadTree/g,
+                    to: 'o'
+                }, {
+                    from: /Game/g,
+                    to: 'p'
+                }]
+            }
         }
     });
 
@@ -118,7 +158,7 @@ module.exports = function (grunt) {
         'clean:beforeRelease',
         'copy',
         'concat',
-        //'uglify',
+        'replace',
         'closure-compiler',
         'htmlmin',
         'cssmin',

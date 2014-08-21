@@ -4,23 +4,17 @@ dm.mk(
         'use strict';
         return function (x, y) {
             var image = null,
-                module = re('Base')({
-                    pos: re('geom')['Vec2'](x, y),
-                    vel: re('geom')['Vec2'](0, 0),
-                    scale: re('geom')['Vec2'](1, 1),
-                    origin: re('geom')['Vec2'](0, 0),
-                    maxVel: re('geom')['Vec2'](0, 0),
-                    bounds: re('geom')['Rect'](x, y),
+                V = re('geom')['Vec2'],
+                module = re('geom')['Rectangle'](x, y, 0, 0).add({
+                    vel: V(0, 0),
+                    scale: V(1, 1),
+                    maxVel: V(0, 0),
                     angle: 0,
-                    width: 0,
-                    height: 0,
                     makeImg: function (w, h, c) {
                         c = c || '#fff';
                         image = G.gfx.make(w, h, c);
                         this.width = w;
                         this.height = h;
-                        this.bounds.width = w;
-                        this.bounds.height = h;
                     },
                     update: function () {
                         if (this.maxVel.x !== 0) {
@@ -34,7 +28,6 @@ dm.mk(
                             }
                         }
                         this.pos.add(this.vel);
-                        this.bounds.pos.copy(this.pos).sub(this.origin);
                     },
                     draw: function (gfx) {
                         var ctx = gfx.context;
@@ -45,6 +38,7 @@ dm.mk(
                         ctx.translate(-this.origin.x, -this.origin.y);
                         gfx.drawImg(image, 0, 0);
                         ctx.restore();
+                        //gfx.lineRect(this.pos.x - this.origin.x, this.pos.y -this.origin.y, this.width, this.height);
                     }
                 });
 
