@@ -9,7 +9,7 @@ dm.mk(
                 quadTree = re('QuadTree')(0, 0, G.width, G.height),
                 onOverlap = function (n, m) {
                     if (m.kill) {
-                        m.kill();
+                        m.kill(true);
                     } else {
                         m.separate(n);
                     }
@@ -25,9 +25,27 @@ dm.mk(
                         }
                     });
                 },
+                startShake = false,
+                shakeLife = 100,
+                shakeTimer = 0,
+                audio = new ArcadeAudio(),
+                shake = re('geom')['Vec2'](),
+                helloWorld = re('Text')(20, 20, 'Testing BitmapFont module.\nI can add new lines\n\nabcdefghijklmnopqrstuvwxyz \n0123456789:.!?'),
                 PlayState = G.states.create({
                     onCreate: function () {
+                        audio.add('shotgun', 10, [
+                            [3,,0.3708,0.5822,0.3851,0.0584,,-0.0268,,,,-0.0749,1,,,,,,2,,,,,0.5]
+                        ]);
+                        audio.add('gun', 10, [
+                            [1,,0.2,,,0.1,,,,,,,,,,,1,,0.5,,,,,0.5]
+                        ]);
+                        audio.add('flamethrower', 10, [
+                            [3,,0.2,,,0.1,,,,,,,,,,,1,,0.5,,,,,0.5]
+                        ]);
+                        audio.play('gun');
+                        helloWorld.scale.set(2, 2);
                         player = re('Player')(G.width / 2, G.height / 2);
+                        player.audio = audio;
                         rect = re('geom')['Rectangle'](200, 200, 100, 80);
                         rect.solid = true;
                         rect.draw = function (g) {
@@ -40,11 +58,18 @@ dm.mk(
                         this.add(rect);
                         player.addCollideObject(rect);
                         for (var i = 0; i < 10; ++i) {
-                            var s = re('Sprite')(rnd(10, G.width-10), rnd(10, G.height-10));
+                            var s = re('Sprite')(rnd(10, G.width - 10), rnd(10, G.height - 10));
                             s.makeImg(rnd(20, 40), rnd(20, 40));
                             this.add(s);
                             boxes.push(s);
                         }
+                        $['sh'] = function (f) {
+                            if (!startShake) {
+                                startShake = true;
+                                shake.set(f * sgn(rnd(-1, 1)), f * sgn(rnd(-1, 1)));
+                                shakeTimer = ms();
+                            }
+                        };
                         $['qt'] = quadTree;
                         $['ov'] = function (n, m, callback, y) {
                             var r;
@@ -61,8 +86,8 @@ dm.mk(
                                     handleCollisionCallback(b, r, (function () {
                                         if (y) {
                                             return function (x, y) {
-                                                if (x.kill) {
-                                                    x.kill();
+                                                if (x.kill && !y.kill) {
+                                                    x.kill(true);
                                                 }
                                             }
                                         } else {
@@ -114,6 +139,7 @@ dm.mk(
                                 });
                             }
                         };
+                        this.add(helloWorld);
                     },
                     onUpdate: function () {
                         this.parent.onUpdate();
@@ -124,10 +150,25 @@ dm.mk(
                         ov(boxes, boxes, onOverlap);
                         ov(boxes, player, onOverlap);
                         ov(player.bullets(), boxes, onOverlap, true);
+                        helloWorld.setText(player.bulletIndex());
                     },
                     onRender: function (g) {
                         g.context.lineWidth = 5;
+                        g.context.save();
+                        if (startShake) {
+                            g.context.translate(shake.x, shake.y);
+                            if (shake.x > 0 || shake.x < 0) {
+                                shake.x *= -1;
+                            }
+                            if (shake.y > 0 || shake.y < 0) {
+                                shake.y *= -1;
+                            }
+                            if (ms() - shakeTimer > shakeLife) {
+                                startShake = false;
+                            }
+                        }
                         this.parent.onRender(g);
+                        g.context.restore();
                         g.context.lineWidth = 1;
                         //quadTree.debugDraw(g);
                     },
@@ -135,6 +176,7 @@ dm.mk(
                         this.parent.onDestroy();
                         delete $['qd'];
                         delete $['cl'];
+                        delete $['sh'];
                     }
                 });
 

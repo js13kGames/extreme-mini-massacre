@@ -21,6 +21,10 @@ dm.mk(
                         }
                     });
                     context.fillStyle = context.strokeStyle = color;
+                    context.imageSmoothingEnabled = false;
+                    context.oImageSmoothingEnabled = false;
+                    context.mozImageSmoothingEnabled = false;
+                    context.webkitImageSmoothingEnabled = false;
                 },
                 module = {
                     cls: function (n) {
@@ -33,6 +37,13 @@ dm.mk(
                         context.fillRect(0, 0, canvas.width, canvas.height);
                         context.fillStyle = color;
                         context.globalAlpha = alpha;
+
+                    },
+                    circle: function (x, y, r) {
+                        context.beginPath();
+                        context.arc(x, y, r, 0, Math.PI * 2);
+                        context.fill();
+                        context.closePath();
                     },
                     color: function (n) {
                         color = n;
@@ -66,6 +77,9 @@ dm.mk(
                     },
                     drawImg: function (i, x, y) {
                         context.drawImage(i, x, y);
+                    },
+                    drawImgRect: function (i, x, y, sx, sy, sw, sh) {
+                        context.drawImage(i, sx, sy, sw, sh, x, y, sw, sh);
                     }
                 };
 

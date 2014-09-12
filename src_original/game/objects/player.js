@@ -13,14 +13,51 @@ dm.mk(
                 currentBullet = 0,
                 delay = 50,
                 delayTimer = ms(),
+                gunType = 0,
                 shoot = function () {
                     if (ms() - delayTimer > delay) {
-                        bullets[currentBullet].shoot(module.pos.x, module.pos.y, module.angle, 1);
+                        var r = 1;
+                        if (gunType === 1) {
+                            r = 3;
+                            delay = 0;
+                            module.audio.play('flamethrower');
+                        } else if (gunType === 0) {
+                            delay = 40;
+                            sh(2);
+                            module.audio.play('gun');
+                        } else if (gunType === 2) {
+                            delay = 600;
+                            module.audio.play('shotgun');
+                        }
+                        if (gunType !== 2) {
+                            bullets[currentBullet].gunType = gunType;
+                            bullets[currentBullet].shoot(module.pos.x, module.pos.y, module.angle, r);
+                        } else {
+                            if (currentBullet + 5 < bullets.length - 1) {
+                                var cb = currentBullet + 5;
+                                for (currentBullet = cb - 5; currentBullet < cb; ++currentBullet) {
+                                    if (bullets[currentBullet]) {
+                                        bullets[currentBullet].gunType = gunType;
+                                        bullets[currentBullet].shoot(module.pos.x, module.pos.y, module.angle, 5);
+                                    }
+                                }
+                                sh(4);
+                            } else {
+                                currentBullet = 0;
+                                for (currentBullet = 0; currentBullet < 5; ++currentBullet) {
+                                    bullets[currentBullet].gunType = gunType;
+                                    bullets[currentBullet].shoot(module.pos.x, module.pos.y, module.angle, 5);
+                                }
+                                sh(4);
+                            }
+
+                        }
                         currentBullet++;
                         if (currentBullet > bullets.length - 1) {
                             currentBullet = 0;
                         }
                         delayTimer = ms();
+
                     }
                 },
                 followMouse = function () {
@@ -73,6 +110,13 @@ dm.mk(
                         followMouse();
                         active = true;
                     }
+                    if (G.keyboard.down(49)) {
+                        gunType = 0;
+                    } else if (G.keyboard.down(50)) {
+                        gunType = 1;
+                    } else if (G.keyboard.down(51)) {
+                        gunType = 2;
+                    }
                     if (G.mouse.down()) {
                         shoot();
                     }
@@ -105,6 +149,13 @@ dm.mk(
                     if (gamepad.buttons[5].pressed || gamepad.buttons[7].pressed) {
                         shoot();
                     }
+                    if (gamepad.buttons[12].pressed) {
+                        gunType = 0;
+                    } else if (gamepad.buttons[14].pressed) {
+                        gunType = 1;
+                    } else if (gamepad.buttons[13].pressed) {
+                        gunType = 2;
+                    }
                     return active;
                 },
                 onKeyDown = function () {
@@ -112,6 +163,9 @@ dm.mk(
                 },
                 bullets = [],
                 module = re('Sprite')(x, y).add({
+                    bulletIndex: function () {
+                        return currentBullet;
+                    },
                     bullets: function () {
                         return bullets;
                     },
@@ -121,7 +175,7 @@ dm.mk(
                         module.maxVel.set(7, 7);
                         G.keyboard.addKeyDown(onKeyDown);
                         //G.gfx.context.lineWidth = 5;
-                        for (var i = 0; i < 50; i++) {
+                        for (var i = 0; i < 150; i++) {
                             bullets.push(Bullet());
                         }
                     },

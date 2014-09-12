@@ -25,8 +25,9 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 files: {
-                    'build/src/game.js': [
-                        ['src/main.js', 'src/**/*.js']
+                    'temp/game.js': [
+                        //['src_original/main.js', 'src_original/utils.js', 'src_original/audio.js', 'src_original/**/*.js']
+                        ['src/utils.js', 'src/audio.js', 'src/**/*.js', 'src/main.js']
                     ]
                 }
             }
@@ -52,7 +53,8 @@ module.exports = function (grunt) {
         pngmin: {
             compile: {
                 options: {
-                    ext: '.png'
+                    ext: '.png',
+                    colors: 3
                 },
                 files: [{
                     src: 'assets/**.png',
@@ -66,6 +68,7 @@ module.exports = function (grunt) {
                 'dev/**/'
             ],
             afterRelease: [
+                'temp/',
                 'build/src',
                 'build/zip',
                 'build/g.js.report.txt'
@@ -92,7 +95,7 @@ module.exports = function (grunt) {
         'closure-compiler': {
             frontend: {
                 closurePath: 'node_modules',
-                js: 'build/src/game.js',
+                js: 'temp/game.js',
                 jsOutputFile: 'build/g.js',
                 options: {
                     compilation_level: 'ADVANCED_OPTIMIZATIONS'
@@ -101,54 +104,90 @@ module.exports = function (grunt) {
         },
         replace: {
             another_example: {
-                src: ['build/src/game.js'],
+                src: ['temp/game.js'],
                 overwrite: true,
                 replacements: [{
-                    from: /Vec2/g,
-                    to: 'a'
+                    from: /(GFX\b)/g,
+                    to: 'GF'
                 }, {
-                    from: /Rectangle/g,
+                    from: /(Rectangle\b)/g,
                     to: 'b'
                 }, {
-                    from: /GamePad/g,
+                    from: /(GamePad\b)/g,
                     to: 'c'
                 }, {
-                    from: /Sprite/g,
+                    from: /(LAST_POS\b)/g,
                     to: 'd'
                 }, {
-                    from: /Bullet/g,
+                    from: /(Bullet\b)/g,
                     to: 'f'
                 }, {
-                    from: /geom/g,
-                    to: 'g'
+                    from: /(GAME_WIDTH\b)/g,
+                    to: 'H'
                 }, {
-                    from: /PlayState/g,
-                    to: 'h'
+                    from: /(Player\b)/g,
+                    to: 'PL'
                 }, {
-                    from: /Player/g,
-                    to: 'i'
-                }, {
-                    from: /Keyboard/g,
+                    from: /(keyboard\b)/g,
                     to: 'j'
                 }, {
-                    from: /Mouse/g,
+                    from: /(mouse\b)/g,
                     to: 'k'
                 }, {
-                    from: /Graphics/g,
+                    from: /(Graphics\b)/g,
                     to: 'l'
                 }, {
-                    from: /Line/g,
+                    from: /(Room\b)/g,
                     to: 'm'
                 }, {
-                    from: /State/g,
+                    from: /(State\b)/g,
                     to: 'n'
                 }, {
-                    from: /QuadTree/g,
-                    to: 'o'
+                    from: /(GAME_HEIGHT\b)/g,
+                    to: 'O'
                 }, {
-                    from: /Game/g,
-                    to: 'p'
+                    from: /(mainLoop\b)/g,
+                    to: 'ml'
+                }, {
+                    from: /(FONT_BLACK\b)/g,
+                    to: 'q'
+                }, {
+                    from: /(Sound\b)/g,
+                    to: 'r'
+                }, {
+                    from: /(Collision\b)/g,
+                    to: 'COL'
+                }, {
+                    from: /(overlap\b)/g,
+                    to: 't'
+                }, {
+                    from: /(fdsfsdfdsfs\b)/g,
+                    to: 'u'
+                }, {
+                    from: /(FONT_WHITE\b)/g,
+                    to: 'v'
+                }, {
+                    from: /(Game\b)/g,
+                    to: 'w'
+                }, {
+                    from: /(Particle\b)/g,
+                    to: 'y'
+                }, {
+                    from: /(Base\b)/g,
+                    to: 'z'
+                }, {
+                    from: /(mix\b)/g,
+                    to: 'A'
                 }]
+            }
+        },
+        uglify: {
+            dist: {
+                files: {
+                    'build/g.js': [
+                        'temp/game.js'
+                    ]
+                }
             }
         }
     });
@@ -158,7 +197,7 @@ module.exports = function (grunt) {
         'clean:beforeRelease',
         'copy',
         'concat',
-        'replace',
+        //'replace',
         'closure-compiler',
         'htmlmin',
         'cssmin',

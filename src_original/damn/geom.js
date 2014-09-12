@@ -54,6 +54,9 @@ dm.mk(
                             (n.x - this.x) * (n.x - this.x) +
                             (n.y - this.y) * (n.y - this.y)
                         );
+                    },
+                    angle: function (a) {
+                        return Math.atan2(a.y - this.y, a.x - this.y);
                     }
                 })
             },

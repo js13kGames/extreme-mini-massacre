@@ -3,14 +3,13 @@ body {
     padding: 0 0 0 0;
     text-align: center;
     overflow: hidden;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
+    background-color: #000;
 }
 
 canvas {
     outline: none;
+    margin: 0 auto;
+    display: block;
+    image-rendering: optimizeSpeed;
 }
